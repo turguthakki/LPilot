@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2] - 2026-10-15
+
+### Fixed
+
+- Action buttons in the configuration sidebar now render their icons. The
+  codicon font was never loaded, so the endpoint refresh/delete buttons (and
+  other icons) appeared as empty boxes, making it look impossible to remove an
+  endpoint. Added labels to the endpoint actions so they are always clear.
+- The endpoint and model **Delete/Remove** buttons now actually work.
+  `window.confirm()` is a no-op inside VS Code webviews, so the confirmation
+  never passed and nothing happened; replaced it with an in-webview
+  confirmation dialog.
+
 ## [1.0.1] - 2026-10-15
 
 ### Changed

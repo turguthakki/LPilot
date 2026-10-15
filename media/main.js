@@ -40,6 +40,47 @@
     vscode.postMessage(message);
   }
 
+  /**
+   * In-webview confirmation dialog. `window.confirm()` is a no-op inside VS Code
+   * webviews (it always returns undefined), so it can never gate an action.
+   * Returns a promise resolving to true (confirmed) or false (cancelled).
+   */
+  function confirmDialog({ title, message, confirmLabel = 'Confirm', danger = false }) {
+    return new Promise((resolve) => {
+      const overlay = h('div', { class: 'modal-overlay' });
+      const close = (result) => {
+        overlay.remove();
+        document.removeEventListener('keydown', onKey);
+        resolve(result);
+      };
+      const onKey = (event) => {
+        if (event.key === 'Escape') {
+          close(false);
+        }
+      };
+      const confirmBtn = h('button', {
+        class: `btn ${danger ? 'danger' : 'primary'}`,
+        text: confirmLabel,
+        onclick: () => close(true),
+      });
+      const cancelBtn = h('button', { class: 'btn', text: 'Cancel', onclick: () => close(false) });
+      const dialog = h('div', { class: 'modal' },
+        h('div', { class: 'modal-title', text: title }),
+        message ? h('div', { class: 'modal-body', text: message }) : null,
+        h('div', { class: 'modal-actions' }, cancelBtn, confirmBtn),
+      );
+      overlay.append(dialog);
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) {
+          close(false);
+        }
+      });
+      document.addEventListener('keydown', onKey);
+      document.body.append(overlay);
+      confirmBtn.focus();
+    });
+  }
+
   function showToast(level, text) {
     const toast = document.getElementById('toast');
     toast.textContent = text;
@@ -264,18 +305,24 @@
             event.stopPropagation();
             post({ type: 'refreshEndpoint', id: endpoint.id });
           },
-        }, h('span', { class: 'codicon codicon-refresh' })),
+        }, h('span', { class: 'codicon codicon-refresh' }), h('span', { class: 'btn-label', text: 'Refresh' })),
         h('button', {
           class: 'btn small danger',
           title: 'Delete endpoint',
-          onclick: (event) => {
+          onclick: async (event) => {
             event.stopPropagation();
-            if (confirm(`Delete endpoint "${endpoint.name}" and its cached models?`)) {
+            const ok = await confirmDialog({
+              title: 'Delete endpoint',
+              message: `Delete endpoint "${endpoint.name}" and its cached models?`,
+              confirmLabel: 'Delete',
+              danger: true,
+            });
+            if (ok) {
               delete drafts[endpoint.id];
               post({ type: 'removeEndpoint', id: endpoint.id });
             }
           },
-        }, h('span', { class: 'codicon codicon-trash' })),
+        }, h('span', { class: 'codicon codicon-trash' }), h('span', { class: 'btn-label', text: 'Delete' })),
       ),
     );
     card.append(head);
@@ -535,16 +582,22 @@
         h('button', {
           class: 'btn small danger',
           title: 'Remove this model from the configuration',
-          onclick: (event) => {
+          onclick: async (event) => {
             event.stopPropagation();
-            if (confirm(`Remove model "${model.modelId}" from the configuration?`)) {
+            const ok = await confirmDialog({
+              title: 'Remove model',
+              message: `Remove model "${model.modelId}" from the configuration?`,
+              confirmLabel: 'Remove',
+              danger: true,
+            });
+            if (ok) {
               if (model.origin !== 'user' && (!model.userSet || model.userSet.length === 0)) {
                 showToast('info', 'Will be re-added on the next discovery if the server still reports it');
               }
               post({ type: 'removeModel', key: model.key });
             }
           },
-        }, h('span', { class: 'codicon codicon-trash' })),
+        }, h('span', { class: 'codicon codicon-trash' }), h('span', { class: 'btn-label', text: 'Remove' })),
       ),
       isOpen
         ? h('div', { class: 'model-details' },

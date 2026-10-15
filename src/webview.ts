@@ -52,6 +52,7 @@ export class ConfigViewProvider implements vscode.WebviewViewProvider {
       .replace(/\$\{cspSource\}/g, webview.cspSource)
       .replace(/\$\{nonce\}/g, nonce)
       .replace(/\$\{scriptUri\}/g, webview.asWebviewUri(vscode.Uri.joinPath(mediaDir, 'main.js')).toString())
+      .replace(/\$\{codiconUri\}/g, webview.asWebviewUri(vscode.Uri.joinPath(mediaDir, 'codicon.css')).toString())
       .replace(/\$\{styleUri\}/g, webview.asWebviewUri(vscode.Uri.joinPath(mediaDir, 'style.css')).toString());
   }
 
