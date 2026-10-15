@@ -2,7 +2,7 @@
   "name": "lpilot",
   "displayName": "LPilot - Local & Remote LLM Provider",
   "description": "Use local or remote LLM servers (OpenAI-compatible, llama.cpp, LM Studio, vLLM, Ollama...) as chat models in VS Code, with model auto-discovery.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "turguthakki",
   "author": {
     "name": "Turgut Hakkı Özdemir",
