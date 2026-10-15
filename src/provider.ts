@@ -216,8 +216,12 @@ export class LocalLLMProvider implements vscode.LanguageModelChatProvider<vscode
 /**
  * Builds the model label shown in the chat model picker. The endpoint name is
  * prefixed so models from different servers are easy to tell apart, e.g.
- * "Siyah/ornith" or "NVIDIA/Deepseek". Avoids duplicating the prefix when the
- * model name already starts with the endpoint name.
+ * "Siyah/ornith" or "NVIDIA/Deepseek".
+ *
+ * If the model name already begins with the endpoint name (case-insensitive,
+ * e.g. endpoint "NVIDIA" + model "nvidia/etc"), the duplicate is stripped and
+ * the endpoint's own casing is used as the group prefix, so the grouping stays
+ * consistent ("NVIDIA/etc", not "nvidia/etc").
  */
 function endpointLabel(endpointName: string, modelName: string): string {
   const prefix = (endpointName ?? '').trim();
@@ -225,8 +229,9 @@ function endpointLabel(endpointName: string, modelName: string): string {
   if (!prefix) {
     return name;
   }
-  if (name.toLowerCase().startsWith(prefix.toLowerCase() + '/')) {
-    return name;
+  const prefixWithSlash = `${prefix}/`;
+  if (name.toLowerCase().startsWith(prefixWithSlash.toLowerCase())) {
+    return `${prefix}/${name.slice(prefixWithSlash.length)}`;
   }
   return `${prefix}/${name}`;
 }
