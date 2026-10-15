@@ -93,7 +93,9 @@ export class LocalLLMProvider implements vscode.LanguageModelChatProvider<vscode
       }
       infos.push({
         id: model.key,
-        name: model.name,
+        // Prefix with the endpoint name so models are grouped/labelled by their
+        // source in the picker, e.g. "Siyah/ornith", "NVIDIA/Deepseek".
+        name: endpointLabel(endpoint.name, model.name),
         family: model.family,
         version: model.modelId,
         tooltip: `${model.modelId}${model.detected?.detail ? ` · ${model.detected.detail}` : ''} — ${endpoint.name} (${endpoint.baseUrl})`,
@@ -209,6 +211,24 @@ export class LocalLLMProvider implements vscode.LanguageModelChatProvider<vscode
   ): Promise<number> {
     return Math.ceil(textContent(text).length / 4);
   }
+}
+
+/**
+ * Builds the model label shown in the chat model picker. The endpoint name is
+ * prefixed so models from different servers are easy to tell apart, e.g.
+ * "Siyah/ornith" or "NVIDIA/Deepseek". Avoids duplicating the prefix when the
+ * model name already starts with the endpoint name.
+ */
+function endpointLabel(endpointName: string, modelName: string): string {
+  const prefix = (endpointName ?? '').trim();
+  const name = (modelName ?? '').trim();
+  if (!prefix) {
+    return name;
+  }
+  if (name.toLowerCase().startsWith(prefix.toLowerCase() + '/')) {
+    return name;
+  }
+  return `${prefix}/${name}`;
 }
 
 function textContent(text: string | vscode.LanguageModelChatRequestMessage): string {

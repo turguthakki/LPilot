@@ -32,10 +32,13 @@ OpenAI or any OpenAI-compatible endpoint.
   default request parameters and per-model overrides from the sidebar.
 - 🧩 **Agent mode ready** — tool calling and image input are supported and
   surfaced with badges.
+- 🏷️ **Grouped by endpoint** — models are labelled `endpoint/model` in the
+  picker (e.g. `NVIDIA/Deepseek`, `Siyah/ornith`) so models from different
+  servers are easy to tell apart.
 
 ## Screenshot
 
-> _Screenshot placeholder — add `media/screenshot.png` and reference it here._
+![LPilot chat model picker grouping models by endpoint](https://raw.githubusercontent.com/turguthakki/LPilot/main/media/screenshot.png)
 
 ## Requirements
 
