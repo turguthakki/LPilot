@@ -1,0 +1,175 @@
+{
+  "name": "lpilot",
+  "displayName": "LPilot - Local & Remote LLM Provider",
+  "description": "Use local or remote LLM servers (OpenAI-compatible, llama.cpp, LM Studio, vLLM, Ollama...) as chat models in VS Code, with model auto-discovery.",
+  "version": "0.1.0",
+  "publisher": "turguthakki",
+  "author": {
+    "name": "Turgut Hakkı Özdemir",
+    "email": "turgut.hakki@gmail.com"
+  },
+  "license": "MIT",
+  "icon": "media/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/turguthakki/LPilot.git"
+  },
+  "homepage": "https://github.com/turguthakki/LPilot#readme",
+  "bugs": {
+    "url": "https://github.com/turguthakki/LPilot/issues"
+  },
+  "engines": {
+    "vscode": "^1.140.0"
+  },
+  "categories": [
+    "AI",
+    "Chat"
+  ],
+  "keywords": [
+    "llm",
+    "local llm",
+    "ai",
+    "chat",
+    "language model provider",
+    "lm studio",
+    "llama.cpp",
+    "ollama",
+    "vllm",
+    "openai",
+    "copilot",
+    "agent"
+  ],
+  "galleryBanner": {
+    "color": "#7C3AED",
+    "theme": "dark"
+  },
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "languageModelChatProviders": [
+      {
+        "vendor": "localllm",
+        "displayName": "LPilot",
+        "managementCommand": "localllm.openConfig"
+      }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "localllm",
+          "title": "LPilot",
+          "icon": "media/lpilot.svg"
+        }
+      ]
+    },
+    "views": {
+      "localllm": [
+        {
+          "type": "webview",
+          "id": "localllm.configView",
+          "name": "Providers & Models",
+          "contextualTitle": "LPilot"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "localllm.openConfig",
+        "title": "Open Configuration",
+        "category": "LPilot",
+        "icon": "$(settings-gear)"
+      },
+      {
+        "command": "localllm.showLogs",
+        "title": "Show Logs",
+        "category": "LPilot",
+        "icon": "$(output)"
+      },
+      {
+        "command": "localllm.refreshModels",
+        "title": "Refresh Models",
+        "category": "LPilot",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "localllm.addEndpoint",
+        "title": "Add Endpoint",
+        "category": "LPilot",
+        "icon": "$(add)"
+      },
+      {
+        "command": "localllm.setTestModel",
+        "title": "Set Test Model (for integration tests)",
+        "category": "LPilot"
+      },
+      {
+        "command": "localllm.setLoadedOnly",
+        "title": "Set \"Loaded only\" filter on all endpoints (test support)",
+        "category": "LPilot"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "localllm.addEndpoint",
+          "when": "view == localllm.configView",
+          "group": "navigation@1"
+        },
+        {
+          "command": "localllm.refreshModels",
+          "when": "view == localllm.configView",
+          "group": "navigation@2"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "LPilot",
+      "properties": {
+        "localllm.autoDiscoverOnStart": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically discover models from all enabled endpoints when the extension starts."
+        },
+        "localllm.discoveryTimeoutMs": {
+          "type": "number",
+          "default": 15000,
+          "description": "Timeout in milliseconds for model discovery requests."
+        },
+        "localllm.requestTimeoutMs": {
+          "type": "number",
+          "default": 300000,
+          "description": "Timeout in milliseconds for chat completion requests."
+        },
+        "localllm.testModel": {
+          "type": "string",
+          "default": "",
+          "description": "Model id used by the integration test smoke tests (empty = auto-pick a small model)."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run check && node esbuild.js --production",
+    "compile": "npm run check:types && node esbuild.js",
+    "check:types": "tsc -p . --noEmit",
+    "check": "npm run check:types && npm run lint",
+    "lint": "eslint src --ext .ts",
+    "watch": "npm run check:types -- --watch & node esbuild.js --watch",
+    "test": "node esbuild.js && node ./src/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.140.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "eslint": "^8.57.1",
+    "mocha": "^10.8.2",
+    "typescript": "^5.7.2"
+  }
+}

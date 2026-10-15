@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${cspSource}; script-src 'nonce-${nonce}'; font-src ${cspSource}; img-src ${cspSource} data:;" />
+  <link rel="stylesheet" href="${styleUri}" />
+  <title>LPilot Providers &amp; Models</title>
+</head>
+<body>
+  <div id="app" class="app">
+    <header class="header">
+      <div class="header-titles">
+        <h1>LPilot</h1>
+        <p class="subtitle" id="subtitle">Configure LLM endpoints and their models</p>
+      </div>
+      <div class="header-actions">
+        <button id="refresh-all" class="btn primary" title="Discover models on all endpoints">
+          <span class="codicon codicon-refresh"></span> Refresh all
+        </button>
+        <button id="toggle-add" class="btn" title="Add a new endpoint">
+          <span class="codicon codicon-add"></span> Add endpoint
+        </button>
+      </div>
+    </header>
+    <div id="toast" class="toast hidden"></div>
+    <main id="endpoints" class="endpoints"></main>
+    <footer class="footer">
+      <p>Models appear in the VS Code chat model picker as <strong>LPilot</strong>.</p>
+      <p>Use <code>LPilot: Refresh Models</code> from the status bar or command palette anytime.</p>
+    </footer>
+  </div>
+  <script nonce="${nonce}" src="${scriptUri}"></script>
+</body>
+</html>

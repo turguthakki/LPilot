@@ -1,0 +1,28 @@
+name: Publish
+
+# Publishes to the VS Code Marketplace on demand.
+# Requires a repository secret named VSCE_PAT (a Marketplace Personal Access Token).
+# Manual-only so that pushing a release tag does not double-publish a version
+# that was already published locally with `vsce publish`.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run vscode:prepublish
+
+      - name: Publish to VS Code Marketplace
+        run: npx @vscode/vsce publish --no-dependencies
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
